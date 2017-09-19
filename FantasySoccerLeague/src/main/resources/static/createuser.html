@@ -1,10 +1,38 @@
-<div class="floating-box login">
-	<div class="floating-box head"><div class="floating-box highlight"></div><h3>Register</h3></div>
-    <form id="login" >
-        <p>First Name: <input type="text" id="fname"/></p>
-        <p>Last Name: <input type="text" id="lname"/></p>
-        <p>Email: <input type="text" id="email"/></p>
-        <p>Password: <input type="password" id="password"/></p>
-        <button ng-click="create_user()" style="margin-bottom: 5%; position: relative; left: 65%">Register</button>
+<md-card class="view center" layout="column" layout-align="center center" >
+	<h3>Register</h3>
+    <form id="login" layout="column" name="registerForm">
+        <md-input-container>
+            <label>First Name</label>
+            <input type="text" id="fname" name="fname" ng-model="fname" required style="width:20em"/>
+            <div ng-messages="registerForm.fname.$error" role="alert" multiple>
+                <div ng-message="required" class="err-message">First name required.</div>
+                <div ng-message="pattern" class="err-message">Name not allowed.</div>
+            </div>
+        </md-input-container>
+        <md-input-container>
+            <label>Last Name</label>
+            <input type="text" id="lname" name="lname" ng-model="lname" required/>
+            <div ng-messages="registerForm.lname.$error" role="alert" multiple>
+                <div ng-message="required" class="err-message">Last name required.</div>
+                <div ng-message="pattern" class="err-message">Name not allowed.</div>
+            </div>
+        </md-input-container>
+        <md-input-container>
+            <label>Email</label>
+            <input type="email" id="email" name="email" ng-model="email" required/>
+            <div ng-messages="registerForm.email.$error" role="alert" multiple>
+                <div ng-message="required" class="err-message">Email required.</div>
+                <div ng-message="pattern" class="err-message">Email not allowed.</div>
+            </div>
+        </md-input-container>
+        <md-input-container>
+            <label>Password</label>
+            <input type="password" id="password" name="password" ng-model="password" required/>
+            <div ng-messages="registerForm.password.$error" role="alert" multiple>
+                <div ng-message="required" class="err-message">Password required.</div>
+                <div ng-message="pattern" class="err-message">Password not allowed.</div>
+            </div>
+        </md-input-container>
+        <md-button style="background:#ff5900" class="md-raised md-primary" ng-click="create_user()">Register</md-button>
     </form>
-</div>
+</md-card>

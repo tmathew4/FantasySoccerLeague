@@ -1,6 +1,6 @@
-var app = angular.module('main', ["ngRoute"]);
+var app = angular.module('main', ["ngRoute", "ngMaterial", "ngMessages"]);
 app.show = false;
-app.controller("menu", ['$scope', '$location', '$http', '$rootScope', function($scope, $location, $http, $rootScope) {
+app.controller("menu", ['$scope', '$location', '$http', '$rootScope', '$mdToast', '$mdDialog', function($scope, $location, $http, $rootScope, $mdToast, $mdDialog) {
         $rootScope.route = function(path) {
             $location.path(path);
         }
@@ -10,7 +10,9 @@ app.controller("menu", ['$scope', '$location', '$http', '$rootScope', function($
                 $rootScope.route("/");
             }
         });
-		$scope.login = function() {
+		$scope.login = function($event) {
+		    document.getElementById("loadingAnim").style.display = "block";
+		    setTimeout(function() {document.getElementById("loadingAnim").style.display="none";}, 1000);
 			console.log("inside login function");
 			var user = {
 				"email" : document.getElementById("email").value,
@@ -23,6 +25,7 @@ app.controller("menu", ['$scope', '$location', '$http', '$rootScope', function($
 		        contentType: 'application/json',
 		        data : JSON.stringify(user)
 		    }).then(function($response) {
+		        $mdToast.show($mdToast.simple().textContent("You are logged in.").position("bottom right"));
 		    	$rootScope.user = $response.data;
 		    	console.log($response);
 		    	console.log($response.data);
@@ -30,12 +33,22 @@ app.controller("menu", ['$scope', '$location', '$http', '$rootScope', function($
 		    	if($rootScope.user != null) {
 		    	    $location.path("/home");
 		    	}
+		    }, function() {
+		        $mdToast.show($mdToast.simple().textContent("Login failed.").position("bottom right"));
 		    });
 		}
-		$rootScope.logout = function() {
-		    $http.get("/logout");
-		    $rootScope.user = null;
-		    $rootScope.route("/");
+		$rootScope.logout = function($event) {
+		    var confirm = $mdDialog.confirm()
+		        .title("Are you sure you want to log out?")
+		        .ok("Logout")
+		        .cancel("Cancel");
+		    $mdDialog.show(confirm).then(function() {
+		        $http.get("/logout");
+		        $rootScope.user = null;
+		        $rootScope.route("/");
+		    }, function() {
+		    });
+
 		}
 		$rootScope.get_points = function(player) {
 			var points = player.goals * (4 + player.position.id);
@@ -47,6 +60,26 @@ app.controller("menu", ['$scope', '$location', '$http', '$rootScope', function($
 			console.log(points);
 			return points;
 		}
+		$rootScope.get_h_points = function(player) {
+		    console.log(player);
+			var points = player.goals * (4 + player.player.position.id);
+			points += player.sog;
+			points += 3 * player.assists;
+			points -= player.yellow_Cards;
+			points -= 2 * player.own_Goals;
+			points -= 3 * player.red_Cards;
+			console.log(points);
+			return points;
+		}
+        $rootScope.get_team = function(id, name, league, points) {
+            $rootScope.team_id = id;
+            $rootScope.team_name = name;
+            $rootScope.league_id = league;
+            $rootScope.team_points = points;
+            $rootScope.mine = false;
+            $location.path("/teams");
+        }
+		$scope.currentNavItem='home';
 
 	}]);
 app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
@@ -83,9 +116,6 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
 		templateUrl : "createteam.html",
 		controller : "create_team"
 	})
-    .when("/schedule", {
-        templateUrl : "schedule.html"
-    })
     .when("/create", {
         templateUrl : "createuser.html",
         controller : "create_user"
@@ -200,7 +230,7 @@ app.controller("list_unsigned_players", ['$scope', '$http', '$rootScope', functi
 		$scope.unsigned_players = response.data;
 	});
 }]);
-app.controller("player_stats", ['$scope', '$routeParams','$http', "$location", "$rootScope", function($scope, $routeParams, $http, $location, $rootScope) {
+app.controller("player_stats", ['$scope', '$routeParams','$http', "$location", "$rootScope", '$mdToast', function($scope, $routeParams, $http, $location, $rootScope, $mdToast) {
 	$http.get("player_stats/"+$routeParams.id).then(function(response){
 		console.log(response.data);
 		$scope.u_player_stats = response.data;
@@ -216,42 +246,53 @@ app.controller("player_stats", ['$scope', '$routeParams','$http', "$location", "
         $rootScope.team_money = $response.data.money;
 	    $rootScope.mine = true;
 	});
-	$scope.sign = function(player_id) {
+	$scope.sign = function(player_id,$event ) {
 	    //$rootScope.team_id = document.getElementById("my_team").value;
 	    $http.get("/sign_player/" + $scope.player_id + "/" + $rootScope.team_id).then(function() {
+	        $mdToast.show($mdToast.simple().textContent("Player drafted.").position("bottom right"));
 	        $location.path("/teams")
+	    }, function() {
+	        $mdToast.show($mdToast.simple().textContent("Player could not be drafted.").position("bottom right"));
 	    });
 	}
 }]);
-app.controller("sign_player", ['$scope','$http', '$location', '$rootScope', function($scope, $http, $location, $rootScope) {
+app.controller("sign_player", ['$scope','$http', '$location', '$rootScope', '$mdToast', function($scope, $http, $location, $rootScope, $mdToast) {
 	$http.get("/available_players/" + $rootScope.league_id).then(function($response){
 	    console.log($response.data);
 		$scope.u_players = $response.data;
 	});
-	$scope.sign = function() {
+	$scope.sign = function($event) {
 	    var player1 = document.getElementById("unsigned_player").value;
 
 	    $http.get("/sign_player/" + player1 + "/" + $rootScope.team_id).then(function() {
+	        $mdToast.show($mdToast.simple().textContent("Player drafted.").position("bottom right"));
             $location.path("/teams")
+        }, function() {
+            $mdToast.show($mdToast.simple().textContent("Player could not be drafted.").position("bottom right"));
         });
 	}
 
 }]);
-app.controller("drop_player",['$scope', '$http', '$rootScope', function($scope, $http, $rootScope){
+app.controller("drop_player",['$scope', '$http', '$rootScope', '$mdToast', function($scope, $http, $rootScope, $mdToast){
 	$http.get("/team/"+ $rootScope.team_id).then(function($response){
+
 		console.log($response.data);
 		$scope.my_players = $response.data;
+	}, function() {
 	});
-	$scope.drop = function() {
+	$scope.drop = function($event) {
 		var player1 = document.getElementById("assigned_player").value;
 		$http.get("/delete_player/" + player1 ).then(function() {
-                                               	        $location.path("/teams")
-                                               	    });
+		$mdToast.show($mdToast.simple().textContent("Player dropped from team.").position("bottom right"));
+            $rootScope.route("/teams")
+        }, function() {
+            $mdToast.show($mdToast.simple().textContent("Player could not be dropped.").position("bottom right"));
+        });
     }
 }]);
 
-app.controller("create_team", ['$scope', '$http','$location',
-  function($scope, $http, $location) {
+app.controller("create_team", ['$scope', '$http','$location', '$mdToast',
+  function($scope, $http, $location, $mdToast) {
   $scope.route = function(path) {
   		  $location.path(path);
   		};
@@ -259,7 +300,7 @@ app.controller("create_team", ['$scope', '$http','$location',
 		   console.log($response.data);
 		   $scope.league_names = $response.data;
 		   });
-   	$scope.create_team = function() {
+   	$scope.create_team = function($event) {
 		let myLeagueId =  document.getElementById("leagueId").value;
 		let myTeamName = document.getElementById("teamName").value;
 		console.log(myLeagueId);
@@ -269,11 +310,16 @@ app.controller("create_team", ['$scope', '$http','$location',
 			url : "/register_team/" + myLeagueId + "/" + myTeamName,
 			contentType : 'application/json'
 		}).then(function() {
+
+	    $mdToast.show($mdToast.simple().textContent("Team registered.").position("bottom right"));
 				$scope.route("/home");
+		},function() {
+
+	    $mdToast.show($mdToast.simple().textContent("Team could not be registered.").position("bottom right"));
 		});
 	}
 }]);
-app.controller("trade_players", ['$scope','$http', '$location', '$rootScope', function($scope, $http, $location, $rootScope) {
+app.controller("trade_players", ['$scope','$http', '$location', '$rootScope', '$mdToast', function($scope, $http, $location, $rootScope, $mdToast) {
 	$http.get("/team/" + $rootScope.team_id).then( function($response){
 	    console.log($response.data);
 		$scope.m_players = $response.data;
@@ -288,19 +334,23 @@ app.controller("trade_players", ['$scope','$http', '$location', '$rootScope', fu
                                                       }).length == 0;
                                });
 	});
-	$scope.trade = function() {
+	$scope.trade = function($event) {
 	    var player1 = document.getElementById("my_player").value;
 	    var player2 = document.getElementById("other_player").value;
 	    var offer = document.getElementById("offer").value;
 
 	    $http.get("/trade_player/" + player1 + "/" + player2 + "/" + offer).then(function() {
-                                                                           	        $location.path("/teams")
-                                                                           	    });
+
+	    $mdToast.show($mdToast.simple().textContent("Trade request sent.").position("bottom right"));
+        $location.path("/teams")
+        }, function() {
+	    $mdToast.show($mdToast.simple().textContent("Trade request was not sent.").position("bottom right"));
+        });
 	}
 }]);
-app.controller("create_user", ['$scope', '$location', '$http', '$rootScope', function($scope, $location, $http, $rootScope) {
+app.controller("create_user", ['$scope', '$location', '$http', '$rootScope', '$mdToast', function($scope, $location, $http, $rootScope, $mdToast) {
 
-		$scope.create_user = function() {
+		$scope.create_user = function($event) {
 			console.log("inside create user function");
 			var user = {
 				"email" : document.getElementById("email").value,
@@ -315,27 +365,36 @@ app.controller("create_user", ['$scope', '$location', '$http', '$rootScope', fun
 		        contentType: 'application/json',
 		        data : JSON.stringify(user)
 		    }).then(function($response) {
+
+	    $mdToast.show($mdToast.simple().textContent("Welcome to League Soccer Fantasy").position("bottom right"));
 		    	$rootScope.user = $response.data;
 		    	if($rootScope.user != null) {
 		    	    $location.path("/home");
 		    	}
+		    }, function() {
+
+	    $mdToast.show($mdToast.simple().textContent("Registration failed.").position("bottom right"));
 		    });
 		}
 }]);
-app.controller("get_trades", ['$scope','$http', '$location', '$rootScope', function($scope, $http, $location, $rootScope) {
+app.controller("get_trades", ['$scope','$http', '$location', '$rootScope', '$mdToast', function($scope, $http, $location, $rootScope, $mdToast) {
 	$http.get("/get_trades").then(function($response){
 	    console.log($response.data);
 		$scope.trades = $response.data;
 	});
-	$scope.finalize_trade = function(id) {
+	$scope.finalize_trade = function(id, $event) {
 	    $http.get("/finalize_trade/" + id).then(function($response) {
 	        console.log($response);
+
+	    $mdToast.show($mdToast.simple().textContent("Traded.").position("bottom right"));
 	        $location.path("/teams");
 	    });
 	}
-	$scope.delete_trade = function(id) {
+	$scope.delete_trade = function(id, $event) {
 	    $http.get("/delete_trade/" + id).then(function($response) {
 	        console.log($response);
+
+	    $mdToast.show($mdToast.simple().textContent("Trade denied.").position("bottom right"));
 	        $location.path("/teams");
 	    });
 	}

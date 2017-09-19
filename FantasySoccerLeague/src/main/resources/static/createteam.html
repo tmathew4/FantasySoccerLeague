@@ -1,16 +1,14 @@
-<div class="floating-box login">
-    <div class="floating-box head"><div class="floating-box highlight"></div>
-    <h3> Register Team </h3></div>
-  <div>
-    <form id="create">
-        <select id="leagueId" name="leagueId">
+<md-card class="view center" layout="column" layout-align="center center">
+    <h3> Register Team </h3>
+    <form id="create" layout="column" layout-align="center center">
+        <select id="leagueId" name="leagueId" ng-model="leagueId">
             <option ng-repeat="league in league_names" value="{{league.id}}">{{league.name}}</option>
         </select>
-        <br>
-        <p>Team Name:</p><input type="text" id="teamName"/><hr>
-        <br>
+        <md-input-container>
+            <label>Team Name</label>
+            <input type="text" id="teamName" style="width:20em"/>
+        </md-input-container>
 
-        <button ng-click="create_team()">Create Team</button>
+        <md-button style="background:#ff5900" class="md-raised md-primary" ng-click="create_team()">Create Team</md-button>
     </form>
-  </div>
-</div>
+</md-card>
