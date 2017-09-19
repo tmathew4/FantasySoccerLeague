@@ -29,14 +29,12 @@ thead tr, tfoot tr {
 tbody tr:hover {
     background: #ff5900;
     cursor: pointer;
-    transition: all 0s;
 }
 #tplayer {
     border: 1px solid gray;
 }
 tbody tr {
     border: 1px solid gray;
-    transition: all 1s;
 }
 th, tr {
     text-align: center;
