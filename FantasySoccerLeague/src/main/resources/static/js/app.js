@@ -116,9 +116,6 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
 		templateUrl : "createteam.html",
 		controller : "create_team"
 	})
-    .when("/schedule", {
-        templateUrl : "schedule.html"
-    })
     .when("/create", {
         templateUrl : "createuser.html",
         controller : "create_user"
