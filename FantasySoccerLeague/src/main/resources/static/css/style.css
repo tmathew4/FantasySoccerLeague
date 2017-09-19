@@ -26,14 +26,15 @@ table {
 thead tr, tfoot tr {
     padding: .5em 0;
 }
-tbody:not [id="player_stats_tbody"] tr:hover {
+tbody tr:hover {
     background: #ff5900;
     cursor: pointer;
-    transition: all 0s;
+}
+#tplayer {
+    border: 1px solid gray;
 }
 tbody tr {
     border: 1px solid gray;
-    transition: all 1s;
 }
 th, tr {
     text-align: center;
