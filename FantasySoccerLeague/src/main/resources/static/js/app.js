@@ -151,6 +151,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
 }]);
 
 app.controller("home_controller", function($scope, $http) {
+    $http.get("/my_teams").then(function($response) {
+        console.log($response.data);
+        $scope.m_teams = $response.data;
+    });
 	$http.get("/get_topTeams").then(function(response){
 		console.log(response.data);
 		$scope.topteams = response.data;
@@ -312,7 +316,7 @@ app.controller("create_team", ['$scope', '$http','$location', '$mdToast',
 		}).then(function() {
 
 	    $mdToast.show($mdToast.simple().textContent("Team registered.").position("bottom right"));
-				$scope.route("/home");
+				$scope.route("/m_teams");
 		},function() {
 
 	    $mdToast.show($mdToast.simple().textContent("Team could not be registered.").position("bottom right"));
