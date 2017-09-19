@@ -47,7 +47,25 @@ app.controller("menu", ['$scope', '$location', '$http', '$rootScope', function($
 			console.log(points);
 			return points;
 		}
-
+		$rootScope.get_h_points = function(player) {
+		    console.log(player);
+			var points = player.goals * (4 + player.player.position.id);
+			points += player.sog;
+			points += 3 * player.assists;
+			points -= player.yellow_Cards;
+			points -= 2 * player.own_Goals;
+			points -= 3 * player.red_Cards;
+			console.log(points);
+			return points;
+		}
+        $rootScope.get_team = function(id, name, league, points) {
+            $rootScope.team_id = id;
+            $rootScope.team_name = name;
+            $rootScope.league_id = league;
+            $rootScope.team_points = points;
+            $rootScope.mine = false;
+            $location.path("/teams");
+        }
 	}]);
 app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
     $routeProvider
@@ -158,14 +176,6 @@ app.controller("get_teams", ['$scope', '$location', '$http', '$rootScope', funct
 	    console.log($response.data);
 		$scope.l_teams = $response.data;
 	});
-	$scope.get_team = function(id, name, league, points) {
-        $rootScope.team_id = id;
-        $rootScope.team_name = name;
-        $rootScope.league_id = league;
-        $rootScope.team_points = points;
-	    $rootScope.mine = false;
-	    $location.path("/teams");
-	}
 }]);
 app.controller("team_data", ['$scope','$http', '$rootScope', function($scope, $http, $rootScope) {
 	$http.get("/team/" + $rootScope.team_id).then(function($response){
@@ -178,7 +188,7 @@ app.controller("m_teams", ['$scope', '$location', '$http', '$rootScope', functio
         console.log($response.data);
         $scope.m_teams = $response.data;
     });
-    $scope.load_team = function(id, name, league, points, money) {
+    $rootScope.load_team = function(id, name, league, points, money) {
         $rootScope.team_id = id;
         $rootScope.team_name = name;
         $rootScope.league_id = league;
@@ -245,7 +255,7 @@ app.controller("drop_player",['$scope', '$http', '$rootScope', function($scope, 
 	$scope.drop = function() {
 		var player1 = document.getElementById("assigned_player").value;
 		$http.get("/delete_player/" + player1 ).then(function() {
-                                               	        $location.path("/teams")
+                                               	        $rootScope.route("/teams");
                                                	    });
     }
 }]);
@@ -269,7 +279,7 @@ app.controller("create_team", ['$scope', '$http','$location',
 			url : "/register_team/" + myLeagueId + "/" + myTeamName,
 			contentType : 'application/json'
 		}).then(function() {
-				$scope.route("/home");
+				$scope.route("/m_teams");
 		});
 	}
 }]);

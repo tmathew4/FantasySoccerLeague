@@ -48,6 +48,7 @@ public class UserController {
     @RequestMapping(path="/get_user", method = RequestMethod.GET)
     public String getUser(HttpServletRequest req) throws IOException {
         Fantasy_User user = (Fantasy_User) req.getSession().getAttribute("user");
+        System.out.println(req.getRemoteAddr() + " " + req.getLocalAddr());
         ObjectMapper mapper = new ObjectMapper();
         if(user != null)
             return mapper.writeValueAsString(user);
