@@ -60,6 +60,25 @@ app.controller("menu", ['$scope', '$location', '$http', '$rootScope', '$mdToast'
 			console.log(points);
 			return points;
 		}
+		$rootScope.get_h_points = function(player) {
+		    console.log(player);
+			var points = player.goals * (4 + player.player.position.id);
+			points += player.sog;
+			points += 3 * player.assists;
+			points -= player.yellow_Cards;
+			points -= 2 * player.own_Goals;
+			points -= 3 * player.red_Cards;
+			console.log(points);
+			return points;
+		}
+        $rootScope.get_team = function(id, name, league, points) {
+            $rootScope.team_id = id;
+            $rootScope.team_name = name;
+            $rootScope.league_id = league;
+            $rootScope.team_points = points;
+            $rootScope.mine = false;
+            $location.path("/teams");
+        }
 		$scope.currentNavItem='home';
 
 	}]);
@@ -268,7 +287,7 @@ app.controller("drop_player",['$scope', '$http', '$rootScope', '$mdToast', funct
 		var player1 = document.getElementById("assigned_player").value;
 		$http.get("/delete_player/" + player1 ).then(function() {
 		$mdToast.show($mdToast.simple().textContent("Player dropped from team.").position("bottom right"));
-            $location.path("/teams")
+            $rootScope.route("/teams")
         }, function() {
             $mdToast.show($mdToast.simple().textContent("Player could not be dropped.").position("bottom right"));
         });
