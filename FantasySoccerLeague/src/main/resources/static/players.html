@@ -1,14 +1,12 @@
-<div class="floating-box">
+<md-card class="view" layout="column" layout-align="center center">
 
-	<div class="floating-box head"><div class="floating-box highlight"></div><h2>Players</h2>
-		<table id="smallmenu" ng-controller="menu">
-			<tr>
-				<th ng-click="route('/players')" id="home" class="menu-item">All Player</th>
-				<th ng-click="route('/unsigned_players')" id="league" class="menu-item">Unsigned Players</th>
-			</tr>
-		</table>
-	</div>
+	<h2>Players</h2>
+		<md-toolbar style="background:#ff5900" id="smallmenu" ng-controller="menu" layout="row">
+				<md-button flex ng-click="route('/players')" id="home" class="menu-item">All Player</md-button>
+				<md-button flex ng-click="route('/unsigned_players')" id="league" class="menu-item">Unsigned Players</md-button>
+		</md-toolbar>
 	<table id="team">
+		<thead>
 		<tr>
 			<th class="team-header">#</th>
 			<th class="team-header">Name</th>
@@ -21,6 +19,8 @@
 			<th class="team-header">Cost</th>
 			<th class="team-header">Rating</th>
 		</tr>
+		</thead>
+		<tbody>
 		<tr ng-repeat="x in list_players" ng-click="route('/player_stats/' + x.id)">
 			<td>{{x.number}}</td>
 			<td>{{x.name}}</td>
@@ -33,5 +33,6 @@
 			<td>${{x.cost}} mil</td>
 			<td>{{x.percentage}}</td>
 		</tr>
+		</tbody>
 	</table>
-</div>
+</md-card>
