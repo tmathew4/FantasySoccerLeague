@@ -1,6 +1,7 @@
 <md-card class="view">
         <h2>{{u_player_stats.firstName}} {{u_player_stats.lastName}}</h2>
         <table id="team">
+            <tbody id="player_stats_tbody">
             <tr>
                 <th class="team-header"></th>
                 <td><img src="{{u_player_stats.headShot}}"></td>
@@ -71,5 +72,10 @@
                 <th class="team-header">Yellow Cards:</th>
                 <td>{{u_player_stats.playerId.yellow_Card}}</td>
             </tr>
+            <tr>
+                <th class="team-header">Own Goals:</th>
+                <td>{{u_player_stats.playerId.own_Goals}}</td>
+            </tr>
+            </tbody>
         </table>
         </md-card>

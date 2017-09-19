@@ -1,13 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700);
 body {
     font-family: 'Roboto Slab', serif;
-  background-color: rgba(0, 119, 34, 0.69);
+  /*background-color: rgba(0, 119, 34, 0.69);
   background: url("/img/soccer2.jpeg") no-repeat 50% 50% fixed;
   height: 100%;
   width: 100%;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover; }
+  background-size: cover;*/ }
 
 .view {
     background: rgba(255,255,255,.8);
@@ -26,7 +26,7 @@ table {
 thead tr, tfoot tr {
     padding: .5em 0;
 }
-tbody tr:hover {
+tbody:not [id="player_stats_tbody"] tr:hover {
     background: #ff5900;
     cursor: pointer;
     transition: all 0s;
@@ -43,4 +43,13 @@ th, tr {
 }
 md-card {
     padding: 10px;
+}
+
+bgimg img{
+    height: 120%;
+    width: 100%;
+    position: fixed;
+    top: -10%;
+    left: 0px;
+    z-index: 0;
 }

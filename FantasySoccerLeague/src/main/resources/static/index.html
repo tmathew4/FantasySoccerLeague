@@ -4,18 +4,24 @@
 	    <meta charset="UTF-8">
 	    <title>Fantasy Soccer</title>
 
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-aria.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-messages.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.4/angular-material.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.4/angular-material.min.css">
 		<link rel="stylesheet" type="text/css" media="all" href="css/style.css"/>
 	</head>
 	<body>
+		<bgimg><img src="/img/soccer2.jpeg"/></bgimg>
 		<div ng-app="main" layout="column">
 			<md-progress-linear md-mode="indeterminate" id="loadingAnim" style="display:none"></md-progress-linear>
-			<img src="img/title2.png" height="65" width="200" ng-show="user == 0"/>
-			<div id="menu_container" ng-show="user != 0" layout="column">
+			<!--<img src="img/title2.png" height="65" width="200"/>-->
+			<div id="menu_container" ng-show="user != 0" layout="column" style="margin-top: 5px;">
 				<div layout="row">
-					<img src="img/title2.png" height="65" width="200" ng-show="user != 0"/>
-					<div flex></div>
-					<md-button style="margin: auto; margin-right: 10px; height:fit-content; background:#ff5900"class="md-raised md-primary" id="logout" ng-click="logout()" href="">Logout</md-button>
+					<img src="img/title2.png" height="65" width="200" style="position: relative;top: 0px; left 2px;"/>
+					<md-button style="margin: auto; height:fit-content; background:#ff5900; position: fixed;top: 10px; right: 10px;" class="md-raised md-primary" id="logout" ng-click="logout()" href="" ng-show="user != 0">Logout</md-button>
 				</div>
 				<md-toolbar style="background:#ff5900" id="menu" ng-controller="menu" layout="row">
 					<md-button flex ng-click="route('/home')" id="home" class="menu-item">Home</md-button>
@@ -24,16 +30,9 @@
 					<md-button flex ng-click="route('/p_league')" id="players" class="menu-item">All Players</md-button>
 				</md-toolbar>
 			</div>
-			<div ng-view style="margin-top:10px">
+			<div ng-view style="z-index: 1;">
 		    </div>
 	    </div>
-
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-aria.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-messages.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.4/angular-material.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
 		<script src="js/app.js"></script>
 	</body>
 </html>
