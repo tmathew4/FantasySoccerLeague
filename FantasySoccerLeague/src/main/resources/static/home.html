@@ -1,27 +1,35 @@
-<div class="floating-box" >
-	<div class="floating-box head"><div class="floating-box highlight"></div><h2>Top Teams</h2></div>
+<md-card class="view" layout="column" layout-align="center center" >
+	<h2>Top Teams</h2>
 	<table id="team">
+		<thead>
 		<tr>
 			<th class="team-header">Rank</th>
 			<th class="team-header">Team Name</th>
 			<th class="team-header">League Name</th>
 			<th class="team-header">Total Score</th>
 		</tr>
+		</thead>
+		<tbody>
 		<tr ng-repeat="teams in topteams track by $index" >
 			<td>{{($index%2)+1}}</td>
 			<td>{{teams.name}}</td>
 			<td>{{teams.league.name}}</td>
 			<td>{{teams.points}}</td>
 		</tr>
+		</tbody>
 	</table>
 
+	<h2>Top Players</h2>
 	<table id="team">
+		<thead>
 		<tr>
 			<th class="team-header">Rank</th>
 			<th class="team-header">Player Name</th>
 			<th class="team-header">League Name</th>
 			<th class="team-header">Total Score</th>
 		</tr>
+		</thead>
+		<tbody>
 		<tr ng-repeat="players in topplayers track by $index" >
 			<!-- <td>{{rank}}</td> -->
 			<td>{{($index%2)+1}}</td>
@@ -30,5 +38,6 @@
 			<td>{{get_points(players.player)}}</td>
 			<!-- <td>{{players.Player.weekly.score}}</td> -->
 		</tr>
+		</tbody>
 	</table>
-</div>
+</md-card>

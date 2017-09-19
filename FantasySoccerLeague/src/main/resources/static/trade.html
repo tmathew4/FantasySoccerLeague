@@ -1,26 +1,25 @@
-<div class="floating-box login">
-	<div class="floating-box head"><div class="floating-box highlight"></div>
-		<table id="smallmenu" ng-controller="menu">
-			<tr>
-				<th ng-click="route('/sign')" id="draft" class="menu-item">Draft Player</th>
-				<th ng-click="route('/drop')" id="drop" class="menu-item">Drop Player</th>
-				<th ng-click="route('/trade')" id="trade" class="menu-item">Trade Players</th>
-				<th ng-click="route('/trades')" id="m_trades" class="menu-item">Check Trades</th>
-			</tr>
-		</table>
-	</div>
-	<form id="login">
-		<h3>Trade: </h3>
+<md-card class="view" layout="column" layout-align="center center">
+	<h2>Trade</h2>
+		<md-toolbar style="background:#ff5900" id="smallmenu" ng-controller="menu" layout="row">
+			<md-button flex ng-click="route('/sign')" id="draft" class="menu-item">Draft Player</md-button>
+			<md-button flex ng-click="route('/drop')" id="drop" class="menu-item">Drop Player</md-button>
+			<md-button flex ng-click="route('/trade')" id="trade" class="menu-item">Trade Players</md-button>
+			<md-button flex ng-click="route('/trades')" id="m_trades" class="menu-item">Check Trades</md-button>
+		</md-toolbar>
+	<div class="view">
+	<form id="login" layout="column" layout-align="center center">
+
 		<select id="my_player" name="my_player">
         	<option ng-repeat="player in m_players" value="{{player.id}}">{{player.name}}</option>
         </select>
-        <br/>
 		<select id="other_player" name="other_player">
         	<option ng-repeat="player in o_players" value="{{player.id}}">{{player.name}}</option>
         </select>
-		<br/>
-		Offer: <input type="number" id="offer" min="0" max="100"/>
-		<br/>
-		<button ng-click="trade()">Submit Trade</button>
+		<md-input-container>
+			<label>Offer</label>
+			<input type="number" id="offer" min="0" max="100"/>
+		</md-input-container>
+		<md-button style="background:#ff5900" class="md-raised md-warn" ng-click="trade()">Submit Trade</md-button>
     </form>
-</div>
+	</div>
+</md-card>
