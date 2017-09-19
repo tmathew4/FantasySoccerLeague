@@ -12,7 +12,7 @@
 			<th class="team-header">Red Cards</th>
 			<th class="team-header">Yellow Cards</th>
 			<th class="team-header">Own Goals</th>
-			<th class="team-header">rating</th>
+			<th class="team-header">Rating</th>
 			<th class="team-header">Current Score</th>
 		</tr>
 		<tr ng-repeat="x in t_players" ng-click="route('/player_stats/' + x.id)">
@@ -26,9 +26,16 @@
 			<td>{{x.yellow_Card}}</td>
 			<td>{{x.own_Goals}}</td>
 			<td>{{x.percentage}}%</td>
+			<td>{{x.cost}} mil</td>
 			<td>{{get_points(x)}}</td>
 		</tr>
-		<div><button ng-click="route('/create_team')" id="create_team" class="menu-item">Create Team</button></div>
+		<!--<div><button ng-click="route('/create_team')" id="create_team" class="menu-item">Create Team</button></div>-->
 	</table>
-	<p>Team Score: {{team_points}}</p>
+	<div style="margin-left: 85%;">
+		<div ng-show="mine">
+			<button ng-click="route('/sign')">Manage Team</button>
+			<h3>Money: ${{team_money}} mil</h3>
+		</div>
+		<p>Team Score: {{team_points}}</p>
+	</div>
 </div>

@@ -2,6 +2,7 @@ package com.ex.FantasySoccerLeague.Services;
 
 import com.ex.FantasySoccerLeague.Dao.*;
 import com.ex.FantasySoccerLeague.tables.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class ApplicationServices {
@@ -50,6 +52,10 @@ public class ApplicationServices {
 
     public List<Team> viewAllTeam(Integer id){
         return DaoT.findAllByLeagueId(id);
+    }
+
+    public Team viewMyTeamInLeague(Integer id, Fantasy_User user){
+        return DaoT.findAllByLeagueIdAndUser(id, user);
     }
 
     public List<League> viewAllLeagues(){
@@ -97,12 +103,47 @@ public class ApplicationServices {
         return t;
     }
 
-    public String signPlayer(Integer id, Integer team_id) {
+    public boolean validateTrade(Player p1, Player p2) throws JsonProcessingException, IOException{
+        ObjectMapper mapper = new ObjectMapper();
+
+        ArrayList<Player> team = (ArrayList) playerDao.findAllByTeam_Id(p1.getTeam().getId());
+        team.remove(p1);
+        team.add(p2);
+        if(!validateTeam(mapper.writeValueAsString(team)))
+            return false;
+
+        team = (ArrayList) playerDao.findAllByTeam_Id(p2.getTeam().getId());
+        team.remove(p2);
+        team.add(p1);
+        if(!validateTeam(mapper.writeValueAsString(team)))
+            return false;
+
+        return true;
+    }
+
+
+
+    public String signPlayer(Integer id, Integer team_id) throws JsonProcessingException, IOException{
         Player p = playerDao.findById(id);
-        p.setTeam(DaoT.findOne(team_id));
+
+        Team t = DaoT.findOne(team_id);
+        if(t.getMoney() < p.getCost())
+            return "Failure";
+
+        ArrayList<Player> team = (ArrayList) playerDao.findAllByTeam_Id(team_id);
+        team.add(p);
+
+        ObjectMapper mapper = new ObjectMapper();
+        if(!validateTeam(mapper.writeValueAsString(team)))
+            return "Failure";
+
+        p.setTeam(t);
         playerDao.saveAndFlush(p);
+        t.setMoney(t.getMoney() - p.getCost());
+        DaoT.saveAndFlush(t);
         return "Success";
     }
+
 
     public String dropPlayer(Integer id){
         Player p = playerDao.findById(id);
@@ -251,6 +292,24 @@ public class ApplicationServices {
         }
     }
 
+    public void resetTeams() {
+        List<Player> players = playerDao.findAll();
+        for(Player p : players) {
+            p.setTeam(null);
+            playerDao.saveAndFlush(p);
+        }
+
+        List<Team> teams = DaoT.findAll();
+        for(Team t : teams) {
+            t.setMoney(100);
+            DaoT.saveAndFlush(t);
+        }
+
+        DaoTr.deleteAll();
+        DaoTr.flush();
+    }
+
+
     public void updateTeamPoints(Integer teamId) {
         List<Player> team = playerDao.findAllByTeam_Id(teamId);
         Integer teamTotal = 0;
@@ -269,6 +328,102 @@ public class ApplicationServices {
         DaoT.saveAndFlush(updatedTeam);
     }
 
+    public int calculatePlayerPoint(Player_Points p){
+        int points = 0;
+        points += p.getGoals()* (4+p.getPlayer().getPosition().getId());
+        points += 3*p.getAssists();
+        points += p.getSOG();
+        points += (2*Math.negateExact(p.getOwn_Goals()));
+        points += Math.negateExact(p.getYellow_Cards());
+        points += (3*Math.negateExact(p.getRed_Cards()));
+        return points;
+    }
+
+    public List<Player_Points> getTopPlayersFromAllLeagues(){
+        List<League> leagues = mLeagueDao.findAll();
+        List <List<Player_Points>> topPlayers = new ArrayList<>();
+        List<Player_Points> topPlayersList = new ArrayList<>();
+        for(League a : leagues){
+            topPlayers.add(gettopplayers(a));
+        }
+        for(List<Player_Points> list: topPlayers){
+            for(Player_Points player_points: list){
+                topPlayersList.add(player_points);
+            }
+        }
+        return topPlayersList;
+    }
+
+    public List<Player_Points> gettopplayers(League a){
+        List<Player_Points> players = mWeeklyPointsDao.findByPlayerIn(playerDao.findAllByLeague_Id(a.getId()));
+        System.out.println(players);
+        List<Player_Points> topPlayer =  new ArrayList<>();
+        int maxPoints1 = 0;
+        int maxPoints2= 0;
+        Player_Points maxPlayer1 = null;
+        Player_Points maxPlayer2 = null;
+        int points;
+        for(Player_Points p : players){
+            points = calculatePlayerPoint(p);
+            if (maxPoints1 <= points) {
+                maxPoints2 = maxPoints1;
+                maxPoints1 = points;
+                maxPlayer2 = maxPlayer1;
+                maxPlayer1 = p;
+            } else if (maxPoints2 <= points) {
+                maxPoints2 = points;
+                maxPlayer2 = p;
+            }
+        }
+        topPlayer.add(maxPlayer1);
+        topPlayer.add(maxPlayer2);
+        return  topPlayer;
+    }
+
+    public List<Team> getTopTeamsFromAllLeagues(){
+        List<League> leagues = mLeagueDao.findAll();
+        List<List<Team>> topTeamsBigArray = new ArrayList<>();
+        List<Team> topTeams = new ArrayList<>();
+        for(League a : leagues){
+            topTeamsBigArray.add(getTopTeams(a));
+        }
+
+        for(List<Team> team: topTeamsBigArray){
+            for (Team myteam: team){
+                topTeams.add(myteam);
+            }
+        }
+        return topTeams;
+    }
+
+    public List<Team> getTopTeams(League a) {
+        System.out.println("--------------------------------");
+        List<Team> teams = DaoT.findAllByLeagueId(a.getId());
+        System.out.println(teams);
+        List<Team> topTeams = new ArrayList<>();
+        int maxPoints1 = 0;
+        int maxPoints2 = 0;
+        Team team1 = null;
+        Team team2 = null;
+        int points = 0;
+        for (Team team : teams) {
+            points = team.getPoints();
+            if (maxPoints1 <= points) {
+                maxPoints2 = maxPoints1;
+                maxPoints1 = points;
+                team2 = team1;
+                team1 = team;
+            } else if (maxPoints2 <= points) {
+                maxPoints2 = points;
+                team2 = team;
+            }
+        }
+        topTeams.add(team1);
+        topTeams.add(team2);
+        return topTeams;
+    }
+
+
     public void updateAllTeamPoints() {
         for(Team t: DaoT.findAll()) {
             updateTeamPoints(t.getId());
@@ -284,4 +439,17 @@ public class ApplicationServices {
             }
         }
     }
+
+    int randomWithRange(int min, int max){
+        int range = (max - min) + 1;
+        return (int)(Math.random() * range) + min;
+    }
+
+    public void returnMoneyToTeam(int player_id){
+        Player p = playerDao.findById(player_id);
+        Team team = DaoT.findOne(p.getTeam().getId());
+        team.setMoney(team.getMoney()+(p.getCost()/2));
+        DaoT.saveAndFlush(team);
+    }
+
 }
