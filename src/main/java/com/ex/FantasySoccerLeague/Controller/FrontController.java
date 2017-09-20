@@ -98,7 +98,7 @@ public class FrontController {
     }
 
     @RequestMapping(path = "/register_user")
-    public String registerUser(@RequestBody String json) throws IOException
+    public String registerUser(@RequestBody String json, HttpServletRequest req) throws IOException
     {
         System.out.println(json);
         ObjectMapper mapper = new ObjectMapper(); //Maybe create a instance/class variable since we're using this so much.
@@ -107,7 +107,9 @@ public class FrontController {
         Fantasy_User user = mapper.readValue(json, Fantasy_User.class);
         user.setPassword(applicationServices.hashPassword(user.getPassword()));
         applicationServices.registerUser(user);
-        return json; //So dumb.
+        user = applicationServices.checkLogin(user.getEmail(), user.getPassword());
+        req.getSession().setAttribute("user", user);
+        return mapper.writeValueAsString(user);
 
         //Alternative
 //        try {

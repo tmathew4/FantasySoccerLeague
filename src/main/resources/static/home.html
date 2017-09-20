@@ -3,7 +3,6 @@
 	<table id="team">
 		<thead>
 		<tr>
-			<th class="team-header">Rank</th>
 			<th class="team-header">Team Name</th>
 			<th class="team-header">League Name</th>
 			<th class="team-header">Total Score</th>
@@ -11,7 +10,6 @@
 		</thead>
 		<tbody>
 		<tr ng-repeat="teams in m_teams track by $index" ng-click="get_team(teams.id, teams.name, teams.league.id, teams.points, teams.money)">
-			<td>{{$index}}</td>
 			<td>{{teams.name}}</td>
 			<td>{{teams.league.name}}</td>
 			<td>{{teams.points}}</td>
