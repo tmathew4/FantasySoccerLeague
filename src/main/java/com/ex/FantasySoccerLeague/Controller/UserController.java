@@ -103,7 +103,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(path="/trade_player/{id1}/{id2}", method = RequestMethod.GET)
+    @RequestMapping(path="/trade_player/{id1}/{id2}/{offer]", method = RequestMethod.GET)
     public int tradePlayer(@PathVariable("id1") Integer id1, @PathVariable("id2") Integer id2, @PathVariable("offer") Integer offer) throws IOException {
         applicationServices.tradePlayers(id1, id2, offer);
         return 0;

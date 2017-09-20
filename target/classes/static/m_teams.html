@@ -1,0 +1,20 @@
+<md-card class="view" layout="column" layout-align="center center">
+	<h2>Teams</h2>
+	<table id="team">
+		<thead>
+		<tr>
+			<th class="team-header">Team Name</th>
+			<th class="team-header">League</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="x in m_teams" ng-click="load_team(x.id, x.name, x.league.id, x.points, x.money)">
+			<td>{{x.name}}</td>
+			<td>{{x.league.name}}</td>
+		</tr>
+		</tbody>
+	</table>
+	<div layout-align="center center">
+		<md-button style="background:#ff5900" class="menu-item md-raised md-primary" ng-click="route('/create_team')" id="create_team">Create Team</md-button>
+	</div>
+</md-card>

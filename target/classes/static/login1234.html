@@ -1,0 +1,23 @@
+<md-card class="view center" layout="column" layout-align="center center">
+    <h3>Login</h3>
+    <form id="login" method="POST" layout="column" name="loginForm">
+        <md-input-container>
+            <label>Email</label>
+            <input type="email" id="email" name="email" ng-model="email" required style="width:20em"/>
+            <div ng-messages="loginForm.email.$error" role="alert" multiple>
+                <div ng-message="required" class="err-message">Email required.</div>
+                <div ng-message="pattern" class="err-message">Email not allowed.</div>
+            </div>
+        </md-input-container>
+        <md-input-container>
+            <label>Password</label>
+            <input type="password" id="password" name="password" ng-model="password" required/>
+            <div ng-messages="loginForm.password.$error" role="alert" multiple>
+                <div ng-message="required" class="err-message">Password required.</div>
+                <div ng-message="pattern" class="err-message">Password not allowed.</div>
+            </div>
+        </md-input-container>
+        <md-button style="background:#ff5900" class="md-raised md-primary" type="submit" ng-click="login()">Login</md-button>
+        <md-button href="#!/create">Register</md-button>
+    </form>
+</md-card>

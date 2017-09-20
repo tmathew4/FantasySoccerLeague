@@ -1,0 +1,14 @@
+<md-card class="view center" layout="column" layout-align="center center">
+    <h3> Register Team </h3>
+    <form id="create" layout="column" layout-align="center center">
+        <select id="leagueId" name="leagueId" ng-model="leagueId">
+            <option ng-repeat="league in league_names" value="{{league.id}}">{{league.name}}</option>
+        </select>
+        <md-input-container>
+            <label>Team Name</label>
+            <input type="text" id="teamName" style="width:20em"/>
+        </md-input-container>
+
+        <md-button style="background:#ff5900" class="md-raised md-primary" ng-click="create_team()">Create Team</md-button>
+    </form>
+</md-card>

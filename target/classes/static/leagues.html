@@ -1,0 +1,15 @@
+<md-card class="view" layout="column" layout-align="center center">
+    <h2>Leagues</h2>
+    <table id="team">
+        <thead>
+        <tr>
+            <th class="team-header">League Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="x in leagues" ng-click="get_league(x.id)">
+            <td>{{x.name}}</td>
+        </tr>
+        </tbody>
+    </table>
+</md-card>
