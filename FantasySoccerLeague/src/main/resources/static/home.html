@@ -1,4 +1,24 @@
 <md-card class="view" layout="column" layout-align="center center" >
+	<h2>My Teams</h2>
+	<table id="team">
+		<thead>
+		<tr>
+			<th class="team-header">Rank</th>
+			<th class="team-header">Team Name</th>
+			<th class="team-header">League Name</th>
+			<th class="team-header">Total Score</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="teams in m_teams track by $index" ng-click="get_team(teams.id, teams.name, teams.league.id, teams.points, teams.money)">
+			<td>{{$index}}</td>
+			<td>{{teams.name}}</td>
+			<td>{{teams.league.name}}</td>
+			<td>{{teams.points}}</td>
+		</tr>
+		</tbody>
+	</table>
+
 	<h2>Top Teams</h2>
 	<table id="team">
 		<thead>
@@ -10,12 +30,12 @@
 		</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="teams in topteams track by $index" ng-click="get_team(teams.id, teams.name, teams.league.id, teams.points, teams.money)">
-				<td>{{($index%2)+1}}</td>
-				<td>{{teams.name}}</td>
-				<td>{{teams.league.name}}</td>
-				<td>{{teams.points}}</td>
-			</tr>
+		<tr ng-repeat="teams in topteams track by $index" ng-click="get_team(teams.id, teams.name, teams.league.id, teams.points, teams.money)">
+			<td>{{($index%2)+1}}</td>
+			<td>{{teams.name}}</td>
+			<td>{{teams.league.name}}</td>
+			<td>{{teams.points}}</td>
+		</tr>
 		</tbody>
 	</table>
 
